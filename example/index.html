@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Miniswiper Examples</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+<link rel="stylesheet" type="text/css" href="../dist/miniswiper.css">
+<!-- <link rel="stylesheet" type="text/css" href="../dist/miniswiper.min.css"> -->
+<style>
+html, body { margin: 0; width: 100%; height: 100%;  }
+img { max-width: 100%; display: block; border: none;  }
+h1 { margin: 15px 10px 10px; padding-left: 10px; font-family: 'Courier New', Courier, monospace; line-height: 24px; font-size: 24px; color: #333; border-left: 5px solid #d91c0d; }
+h2 { margin: 20px 10px 10px; line-height: 25px; font-size: 16px; color: #555; }
+p { margin: 5px 15px; font-size: 14px; color: #999; }
+a { color: #96c9ee; }
+.container { width: 100%; max-width: 640px; margin-left: auto; margin-right: auto; }
+.footer { margin-top: 48px; }
+.footer p { margin: 10px; text-align: center; font-size: 12px; color: #ccc; }
+.item {position: relative; display: block; padding: 0 10px; }
+.item img { -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; }
+.item p { position: absolute; right: 10px; top: 10px; font-size: 12px; font-style: italic; white-space: nowrap; color: white; }
+</style>
+</head>
+
+<body>
+<header class="header container">	
+	<h1>Miniswiper Examples</h1>
+</header>
+
+<div class="container">
+	<p>The beautiful photos are take from <a href="https://unsplash.com/" target="_blank" title="Unsplash - Beautiful Free Images">Unsplash</a></p>
+	<section>
+		<h2>Example 1</h2>
+		<div class="miniswiper-container" id="example1">
+			<div class="miniswiper-content">
+				<div class="miniswiper-slide">
+					<a href="https://unsplash.com/photos/0lGVcrAFHZQ" target="_blank" class="item">
+						<img src="src/1.jpg" alt="Hal Gatewood">
+						<p>by: <span>Hal Gatewood</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/YGrIw0NL_gs" target="_blank">
+						<img src="src/2.jpg" alt="Jim Rhoades">
+						<p>by: <span>Jim Rhoades</span></p> </a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/5brvJbR1Pn8" target="_blank">
+						<img src="src/3.jpg" alt="Matthew Kane">
+						<p>by: <span>Matthew Kane</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/gZlQZFCA1Vc" target="_blank">
+						<img src="src/4.jpg" alt="Jamie Street">
+						<p>by: <span>Jamie Street</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/eXHeq48Z-Q4" target="_blank">
+						<img src="src/5.jpg" alt="Frank Mckenna">
+						<p>by: <span>Frank Mckenna</span></p>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+
+<footer class="footer container">
+	<p>&copy; Miniswiper contributors</p>
+</footer>
+
+<script src="../dist/miniswiper.js"></script>
+<!-- <script type="text/javascript" src="../dist/miniswiper.min.js"></script> -->
+<script>
+// example 1
+var example1 = new Miniswiper('example1');
+
+
+</script>
+</body>
+</html>

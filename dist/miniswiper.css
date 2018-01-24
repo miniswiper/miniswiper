@@ -1,0 +1,29 @@
+/*! Miniswiper v1.0.0  */
+.miniswiper-container {
+  position: relative;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.miniswiper-container.mask:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+}
+.miniswiper-content.ready {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+.miniswiper-content:after {
+  content: "";
+  clear: both;
+}
+.miniswiper-container.horizontal .miniswiper-content .miniswiper-slide {
+  float: left;
+}
