@@ -4,15 +4,14 @@
 	overflow: hidden;
 	-webkit-backface-visibility: hidden;
 }
-.miniswiper-container.mask:after {
-	content: "";
+.miniswiper-container .mask {
 	position: absolute;
+	z-index: 999;
 	left: 0;
 	top: 0;
 	width: 100%;
 	height: 100%;
 	display: block;
-	z-index: 1;
 }
 .miniswiper-content.ready {
 	position: absolute;
@@ -23,6 +22,9 @@
 .miniswiper-content:after {
 	content: "";
 	clear: both;
+	width: 0;
+	height: 0;
+	display: block;
 }
 .miniswiper-container.horizontal .miniswiper-content .miniswiper-slide {
 	float: left;

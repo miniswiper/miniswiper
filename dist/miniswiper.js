@@ -15,10 +15,12 @@ function Miniswiper(elemId, params) {
 		height = null,
 		itemCount = 0,
 		stepDistance = 0,
-		currentStep = 0;
+		currentStep = 0,
+		index = 0;
 
 	// effect variables
 	var circular = false, 
+		indicatorDots = false,
 		special = false,
 		minScale = 1,
 		maxScale = 1,
@@ -97,13 +99,29 @@ function Miniswiper(elemId, params) {
 		return result;
 	}
 
+	/* lazy load */
+	function lazyLoad(image, callback) {
+		var img = new Image();
+			img.src = image.getAttribute('data-src'),
+			complete = function(){
+				image.src = img.src;
+				typeof callback==='function' && callback();
+			};
+
+		if (img.complte) complete();
+		img.onload = complete;
+	}
 
 	/* initialize */
 	(function init(elemId, params) {
 		swiperElem  = document.getElementById(elemId);
 		contentElem = swiperElem.getElementsByClassName('miniswiper-content')[0];
 
-		// init params
+		var wrap = swiperElem.getElementsByClassName('miniswiper-content')[0],
+			sliders = swiperElem.getElementsByClassName('miniswiper-slide');
+
+		// init params	
+		itemCount = sliders.length;
 		circular = params && params.circular;
 
 		// set swiper layout
@@ -114,12 +132,23 @@ function Miniswiper(elemId, params) {
 		else 
 			swiperElem.setAttribute('class', swiperElem.getAttribute('class')+' '+direction );
 
+		// lazy load images
+		var images = swiperElem.getElementsByTagName('img');
+		for (var i = 0; i < images.length; i += 1) {
+			if (images[i].getAttribute('data-src')) lazyLoad(images[i])
+		}
+
 		// set swiper width
 		if (!params || !params.width) 
 			width = swiperElem.offsetWidth;
 		else 
 			width = getPixel(params.width, document.body.clientWidth) || swiperElem.offsetWidth;
 		swiperElem.style.width = width+'px';
+
+		// initial sliders, indicator dots
+		for (var i = 0; i < sliders.length; i += 1) {
+			sliders[i].style.width = width+'px';
+		}		
 
 		// set swiper height
 		if (params && params.height)
@@ -129,25 +158,58 @@ function Miniswiper(elemId, params) {
 
 		// normal effect
 		if (!params || !params.special) {
-			if (direction == 'horizontal') { // horizontal
+			// circular
+			if (circular && itemCount > 1) {
+				contentElem.insertBefore(sliders[sliders.length-1].cloneNode(true), sliders[0]);
+				contentElem.insertBefore(sliders[sliders.length-2].cloneNode(true), sliders[0]);
+				contentElem.appendChild(sliders[2].cloneNode(true));
+				contentElem.appendChild(sliders[3].cloneNode(true));				
+			}
+
+			// horizontal
+			if (direction == 'horizontal') {
 				stepDistance = width;
 
-				var wrap = swiperElem.getElementsByClassName('miniswiper-content')[0],
-					sliders = swiperElem.getElementsByClassName('miniswiper-slide');
-
-				itemCount = sliders.length;
-
-				for (var i = 0; i < sliders.length; i += 1) {
-					sliders[i].style.width = width+'px';
-				}		
-
-				if (!circular)
+				if (!circular || itemCount == 1)
 					wrap.style.width = (width*sliders.length+100)+'px';
 				else {
-
+					wrap.style.width = (width*(sliders.length+4)+100)+'px';
+					render(contentElem, -2*stepDistance);
+					currentStep = 2;
 				}
-			} else { // vertical
+			} 
+			// vertical
+			else { 
+				if (height)
+					stepDistance = height;
+				else {
+					var loadedImgs = 0,
+						imgs = sliders[0].getElementsByTagName('img'),
+						callback = function(){
+							loadedImgs += 1;
+							if (loadedImgs == imgs.length) {
+								height = sliders[0].offsetHeight;
+								stepDistance = height;
+								swiperElem.style.height = height+'px';
+								for (var i = 0; i < sliders.length; i += 1) {
+									sliders[i].style.height = height+'px';
+								}
+							}
+						};
 
+					for (var i = 0; i < imgs.length; i += 1) {
+						if (imgs[i].getAttribute('data-src')) {
+							lazyLoad(imgs[i], callback);
+						} else {
+							if (imgs[0].complete) callback();
+							else imgs[i].onload = callback;
+						}
+					}
+				}
+			}			
+			if (circular && itemCount > 1) {
+				render(contentElem, 0, -2*stepDistance);	
+				currentStep = 2;
 			}
 		}
 		// special effect
@@ -175,26 +237,66 @@ function Miniswiper(elemId, params) {
 
 			// horizontal
 			if (direction == 'horizontal') {
+				if (circular && itemCount > 1) {
+					if (step === 1 && moveX > 0) step = itemCount+1;
+					if (step === itemCount && moveX < 0) step = 0;
+				}
 				render(contentElem, -step*stepDistance+moveX);
+			}
+			// vertical
+			else {				
+				if (circular && itemCount > 1) {
+					if (step === 1 && moveY > 0) step = itemCount+1;
+					if (step === itemCount && moveY < 0) step = 0;
+				}
+				render(contentElem, 0, -step*stepDistance+moveY);
 			}
 		};
 
 		// finish 
 		var finish = function(x, y) {
+			if (!currentX || !currentY) return;
+
 			var moveX = x - currentX,
 				moveY = y - currentY;
 
 			// horizontal
 			if (direction == 'horizontal') {					
-				if (! circular) {
+				if (! circular  || itemCount == 1) {
 					if (moveX > 0 && currentStep > 0)
 						currentStep -= 1;					
 					if (moveX < 0 && currentStep < itemCount-1)
 						currentStep += 1;
+				} else {
+					var step = currentStep;
+					if (moveX > 0)
+						currentStep = step===1 ? itemCount : step-1					
+					if (moveX < 0)
+						currentStep = step===itemCount ? 1 : step+1					
 				}
 				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
 				render(contentElem, -currentStep*stepDistance);
 			}
+			// vertical
+			else {				
+				if (! circular || itemCount == 1) {
+					if (moveY > 0 && currentStep > 0)
+						currentStep -= 1;					
+					if (moveY < 0 && currentStep < itemCount-1)
+						currentStep += 1;
+				} else {		
+					var step = currentStep;
+					if (moveY > 0)
+						currentStep = step===1 ? itemCount : step-1					
+					if (moveY < 0)
+						currentStep = step===itemCount ? 1 : step+1					
+				}
+				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
+				render(contentElem, 0, -currentStep*stepDistance);
+			}
+
+			currentX = null;
+			currentY = null;
 		};
 
 		// if the device is a mobile device, listen for touch events.
@@ -242,10 +344,11 @@ function Miniswiper(elemId, params) {
 					move(e.clientX, e.clientY);
 
 					if (Math.abs(e.clientX - currentX) > 1 || Math.abs(e.clientY - currentY) > 1) {
-						if (swiperElem.classList)
-							swiperElem.classList.add('mask')
-						else 
-							swiperElem.setAttribute('class', swiperElem.getAttribute('class')+' mask' );
+						if (! swiperElem.getElementsByClassName('mask').length) {
+							var mask = document.createElement('div');
+							mask.className = 'mask';
+							swiperElem.appendChild(mask);
+						}
 					}
 
 					return false;
@@ -256,12 +359,10 @@ function Miniswiper(elemId, params) {
 					document.onmousemove = null;
 					finish(e.clientX, e.clientY);
 
-					if (swiperElem.classList)
-						swiperElem.classList.remove('mask')
-					else {
-						var newClassName = swiperElem.getAttribute('class').replace(' mask','');
-						swiperElem.setAttribute('class', newClassName );
-					}
+					if (swiperElem.getElementsByClassName('mask').length) {
+						var el = swiperElem.getElementsByClassName('mask')[0];
+						el.parentNode.removeChild(el);
+					}	
 
 					if (/WebKit/i.test(navigator.userAgent))
 						document.removeEventListener('mousedown', handle, false);
