@@ -37,7 +37,7 @@
 		&lt;div class="miniswiper-slide"&gt;
 			&lt;!-- item content --&gt;
 		&lt;/div&gt;
-		&lt;!-- other items... --&gt;
+		&lt;!-- more... --&gt;
 	&lt;/div&gt;
 &lt;/div&gt;</code></pre>
 	</section>
@@ -115,11 +115,140 @@
 				</div>
 			</div>
 		</div>
-	</section>
 		<pre><code>new Miniswiper('MiniswiperId', {
         direction: 'vertical',
-        circular: true
+        indicator: true
     });</code></pre>
+	</section>
+
+	<section>
+		<h2>Example 3</h2>
+		<div class="miniswiper-container" id="example3">
+			<div class="miniswiper-content">
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/5brvJbR1Pn8" target="_blank">
+						<img src="src/images/3.jpg" alt="Matthew Kane">
+						<p>by: <span>Matthew Kane</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/gZlQZFCA1Vc" target="_blank">
+						<img src="src/images/4.jpg" alt="Jamie Street">
+						<p>by: <span>Jamie Street</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/eXHeq48Z-Q4" target="_blank">
+						<img src="src/images/5.jpg" alt="Frank Mckenna">
+						<p>by: <span>Frank Mckenna</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a href="https://unsplash.com/photos/0lGVcrAFHZQ" target="_blank" class="item">
+						<img src="src/images/1.jpg" alt="Hal Gatewood">
+						<p>by: <span>Hal Gatewood</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/YGrIw0NL_gs" target="_blank">
+						<img src="src/images/2.jpg" alt="Jim Rhoades">
+						<p>by: <span>Jim Rhoades</span></p> </a>
+				</div>
+			</div>
+		</div>
+		<pre><code>new Miniswiper('MiniswiperId', {
+        direction: 'horizontal',
+        indicator: 'circle',
+        circular: true,
+        autoplay: true
+    });</code></pre>
+	</section>
+
+	<section>
+		<h2>Example 4</h2>
+		<div class="miniswiper-container" id="example4">
+			<div class="miniswiper-content">
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/gZlQZFCA1Vc" target="_blank">
+						<img src="src/images/4.jpg" alt="Jamie Street">
+						<p>by: <span>Jamie Street</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/eXHeq48Z-Q4" target="_blank">
+						<img src="src/images/5.jpg" alt="Frank Mckenna">
+						<p>by: <span>Frank Mckenna</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a href="https://unsplash.com/photos/0lGVcrAFHZQ" target="_blank" class="item">
+						<img src="src/images/1.jpg" alt="Hal Gatewood">
+						<p>by: <span>Hal Gatewood</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/YGrIw0NL_gs" target="_blank">
+						<img src="src/images/2.jpg" alt="Jim Rhoades">
+						<p>by: <span>Jim Rhoades</span></p> </a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/5brvJbR1Pn8" target="_blank">
+						<img src="src/images/3.jpg" alt="Matthew Kane">
+						<p>by: <span>Matthew Kane</span></p>
+					</a>
+				</div>
+			</div>
+		</div>
+		<pre><code>new Miniswiper('MiniswiperId', {
+        effect: 'fade',
+        indicator: true,
+        circular: true,
+        autoplay: {interval: 5000, duration: 1000}
+    });</code></pre>
+	</section>
+
+	<section>
+		<h2>Example 5</h2>
+		<div class="miniswiper-container special" id="example5">
+			<div class="miniswiper-content">
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/eXHeq48Z-Q4" target="_blank">
+						<img src="src/images/5.jpg" alt="Frank Mckenna">
+						<p>by: <span>Frank Mckenna</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a href="https://unsplash.com/photos/0lGVcrAFHZQ" target="_blank" class="item">
+						<img src="src/images/1.jpg" alt="Hal Gatewood">
+						<p>by: <span>Hal Gatewood</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/YGrIw0NL_gs" target="_blank">
+						<img src="src/images/2.jpg" alt="Jim Rhoades">
+						<p>by: <span>Jim Rhoades</span></p> </a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/5brvJbR1Pn8" target="_blank">
+						<img src="src/images/3.jpg" alt="Matthew Kane">
+						<p>by: <span>Matthew Kane</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/gZlQZFCA1Vc" target="_blank">
+						<img src="src/images/4.jpg" alt="Jamie Street">
+						<p>by: <span>Jamie Street</span></p>
+					</a>
+				</div>
+			</div>
+		</div>
+		<pre><code>new Miniswiper('MiniswiperId', {
+        direction: 'horizontal',
+        circular: true,
+        autoplay: true,
+        special: {maxScale: 0.9, minScale: 0.85}
+    });</code></pre>
+	</section>
 </div>
 
 <footer class="footer container">
@@ -130,13 +259,35 @@
 // example 1
 var example1 = new Miniswiper('example1');
 
-
+// example 2
 var example2 = new Miniswiper('example2', {
 	direction: 'vertical',
-	circular: true
+	indicator: true
 });
 
+// example 3
+var example3 = new Miniswiper('example3', {
+	direction: 'horizontal',
+	indicator: 'circle',
+	circular: true,
+	autoplay: true
+});
 
+// example 4
+var example4 = new Miniswiper('example4', {
+	effect: 'fade',
+	indicator: true,
+	circular: true,
+	autoplay: {interval: 5000, duration: 1000}	
+});
+
+// example 5
+var example5 = new Miniswiper('example5', {
+	direction: 'horizontal',
+	circular: true,
+	autoplay: true,
+	special: {maxScale: 0.9, minScale: 0.85}
+});
 </script>
 </body>
 </html>

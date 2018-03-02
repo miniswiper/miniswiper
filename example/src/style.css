@@ -77,6 +77,9 @@ code {
 	display: block;
 	padding: 5px 10px;
 }
+.special .item {
+	padding: 0;
+}
 
 .item img {
 	-webkit-border-radius: 8px;
