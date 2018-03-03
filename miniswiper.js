@@ -182,12 +182,6 @@ function Miniswiper(elemId, params) {
 		// set swiper layout
 		addClass(swiperElem, obj.direction);
 
-		// lazy load images
-		var images = swiperElem.getElementsByTagName('img');
-		for (var i = 0; i < images.length; i += 1) {
-			if (images[i].getAttribute('data-src')) lazyLoad(images[i])
-		}
-
 		// set swiper width
 		if (!params || !params.width) 
 			obj.width = width = swiperElem.offsetWidth;
@@ -355,7 +349,12 @@ function Miniswiper(elemId, params) {
 			addClass(swiperElem, obj.effect);
 			sliders[0].style.opacity = 1;
 		}
-
+		
+		// lazy load images
+		var images = swiperElem.getElementsByTagName('img');
+		for (var i = 0; i < images.length; i += 1) {
+			if (images[i].getAttribute('data-src')) lazyLoad(images[i])
+		}
 
 		// register events
 		registerEvents();
@@ -702,15 +701,17 @@ function Miniswiper(elemId, params) {
 		var activedItem = swiperElem.getElementsByClassName('indicator-item-active')[0],
 			currentItem = swiperElem.getElementsByClassName('indicator-item')[obj.activeIndex];
 
-		if (autoplay && indicator === 'circle') {
-			var prevPath = activedItem.getElementsByTagName('path')[1],
-				currentPath = currentItem.getElementsByTagName('path')[1];
-			prevPath.style[vendorPrefix+'Transition'] = 'stroke-dashoffset 0ms';
-			currentPath.style[vendorPrefix+'Transition'] = 'stroke-dashoffset '+interval+'ms';
-		}
+		if (activedItem && currentItem) {
+			if (autoplay && indicator === 'circle') {
+				var prevPath = activedItem.getElementsByTagName('path')[1],
+					currentPath = currentItem.getElementsByTagName('path')[1];
+				prevPath.style[vendorPrefix+'Transition'] = 'stroke-dashoffset 0ms';
+				currentPath.style[vendorPrefix+'Transition'] = 'stroke-dashoffset '+interval+'ms';
+			}
 
-		removeClass(activedItem, 'indicator-item-active');
-		addClass(currentItem, 'indicator-item-active');
+			removeClass(activedItem, 'indicator-item-active');
+			addClass(currentItem, 'indicator-item-active');
+		}
 	}	
 
 
