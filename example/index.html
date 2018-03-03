@@ -8,7 +8,7 @@
 
 <!-- Miniswiper -->
 <link rel="stylesheet" type="text/css" href="../dist/miniswiper.min.css?v=1.0.0">
-<script src="../dist/miniswiper.min.js?v=1.0.0"></script>
+<script src="../dist/miniswiper.min.js?v=1.0.0"></script> 
 <!--/ Miniswiper -->
 
 <!-- Highlight -->
@@ -245,8 +245,50 @@
 		<pre><code>new Miniswiper('MiniswiperId', {
         direction: 'horizontal',
         circular: true,
-        autoplay: {interval: 3500, duration: 500}
+        autoplay: {interval: 3500, duration: 500},
         special: {maxScale: 0.9, minScale: 0.85}
+    });</code></pre>
+	</section>
+
+	<section>
+		<h2>Example 6</h2>
+		<div class="miniswiper-container" id="example6">
+			<div class="miniswiper-content">
+				<div class="miniswiper-slide">
+					<a href="https://unsplash.com/photos/0lGVcrAFHZQ" target="_blank" class="item">
+						<img src="src/images/0.jpg" data-src="src/images/1.jpg" alt="Hal Gatewood">
+						<p>by: <span>Hal Gatewood</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/YGrIw0NL_gs" target="_blank">
+						<img src="src/images/0.jpg" data-src="src/images/2.jpg" alt="Jim Rhoades">
+						<p>by: <span>Jim Rhoades</span></p> </a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/5brvJbR1Pn8" target="_blank">
+						<img src="src/images/0.jpg" data-src="src/images/3.jpg" alt="Matthew Kane">
+						<p>by: <span>Matthew Kane</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/gZlQZFCA1Vc" target="_blank">
+						<img src="src/images/0.jpg" data-src="src/images/4.jpg" alt="Jamie Street">
+						<p>by: <span>Jamie Street</span></p>
+					</a>
+				</div>
+				<div class="miniswiper-slide">
+					<a class="item" href="https://unsplash.com/photos/eXHeq48Z-Q4" target="_blank">
+						<img src="src/images/0.jpg" data-src="src/images/5.jpg" alt="Frank Mckenna">
+						<p>by: <span>Frank Mckenna</span></p>
+					</a>
+				</div>
+			</div>
+		</div>
+		<pre><code>new Miniswiper('MiniswiperId', {
+        direction: 'horizontal',
+        arrow: true,
+        circular: true
     });</code></pre>
 	</section>
 </div>
@@ -285,8 +327,15 @@ var example4 = new Miniswiper('example4', {
 var example5 = new Miniswiper('example5', {
 	direction: 'horizontal',
 	circular: true,
-	autoplay: true,
+	autoplay: {interval: 3500, duration: 500},
 	special: {maxScale: 0.9, minScale: 0.85}
+});
+
+// example 6
+var example6 = new Miniswiper('example6', {
+	direction: 'horizontal',
+	arrow: true,
+	circular: true
 });
 </script>
 </body>

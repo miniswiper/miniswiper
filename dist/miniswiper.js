@@ -17,6 +17,7 @@ function Miniswiper(elemId, params) {
 
 	// effect variables
 	var	indicator = null,
+		arrow = null,
 		special  = false,
 		minScale = 1,
 		maxScale = 1,
@@ -154,7 +155,9 @@ function Miniswiper(elemId, params) {
 			if (params.circular) 
 				obj.circular = params.circular;
 			if (params.indicator)
-				indicator = params.indicator;
+				indicator = params.indicator;			
+			if (params.arrow)
+				arrow = params.arrow;
 			if (params.bindchange && typeof params.bindchange === 'function')
 				obj.bindchange = params.bindchange;
 			if (params.autoplay) {
@@ -196,6 +199,7 @@ function Miniswiper(elemId, params) {
 			sliders[i].style.width = width*maxScale+'px';
 			// vertical spacial effect
 			if (special && obj.direction == 'vertical') {
+				sliders[i].style.width = width+'px';
 				sliders[i].style.paddingLeft = ((1-maxScale)*width / 2)+'px';
 				sliders[i].style.paddingRight = ((1-maxScale)*width / 2)+'px';
 			}
@@ -349,7 +353,7 @@ function Miniswiper(elemId, params) {
 			addClass(swiperElem, obj.effect);
 			sliders[0].style.opacity = 1;
 		}
-		
+
 		// lazy load images
 		var images = swiperElem.getElementsByTagName('img');
 		for (var i = 0; i < images.length; i += 1) {
@@ -362,8 +366,9 @@ function Miniswiper(elemId, params) {
 		// autoplay
 		if (autoplay) setPlay();
 
-		// initialize indicator
+		// initialize indicator, arrow buttons
 		if (indicator) initIndicator();
+		if (arrow) initArrowButton();
 
 	})(elemId, params);
 
@@ -388,6 +393,9 @@ function Miniswiper(elemId, params) {
 						if (step === 1 && moveX > 0) step = obj.itemCount+1;
 						if (step === obj.itemCount && moveX < 0) step = 0;
 					}
+					if (! obj.circular 
+						&& (step == 0&& moveX > 0 || step == obj.itemCount-1 && moveX < 0)
+					) moveX *= 0.25;
 					render(contentElem, -step*stepDistance+moveX+margin);
 				}
 				// vertical
@@ -396,6 +404,9 @@ function Miniswiper(elemId, params) {
 						if (step === 1 && moveY > 0) step = obj.itemCount+1;
 						if (step === obj.itemCount && moveY < 0) step = 0;
 					}
+					if (! obj.circular 
+						&& (step == 0&& moveY > 0 || step == obj.itemCount-1 && moveY < 0)
+					) moveY *= 0.25;
 					render(contentElem, 0, -step*stepDistance+moveY+margin);
 				}
 				// special
@@ -546,6 +557,7 @@ function Miniswiper(elemId, params) {
 			}
 
 			if (indicator) updateIndicator();
+			if (arrow) updateArrowButton();
 			if (obj.bindchange) obj.bindchange(obj.activeIndex);
 			if (autoplay) setPlay();
 
@@ -695,7 +707,6 @@ function Miniswiper(elemId, params) {
 		swiperElem.appendChild(elem);
 	}
 
-
 	/* update indicator */	
 	function updateIndicator()  {
 		var activedItem = swiperElem.getElementsByClassName('indicator-item-active')[0],
@@ -713,6 +724,36 @@ function Miniswiper(elemId, params) {
 			addClass(currentItem, 'indicator-item-active');
 		}
 	}	
+
+
+	/* initialize arrow buttons */
+	function initArrowButton() {
+		if (obj.itemCount > 1) {
+			var prevBtn = document.createElement('div'),
+				nextBtn = document.createElement('div');
+
+			prevBtn.className = 'miniswiper-button-prev';
+			prevBtn.style.display = obj.circular ? 'block' : 'none';
+			prevBtn.addEventListener('click', function(){ obj.slideToPrev() });
+
+			nextBtn.className = 'miniswiper-button-next';
+			nextBtn.addEventListener('click', function(){ obj.slideToNext() });
+
+			swiperElem.appendChild(prevBtn);
+			swiperElem.appendChild(nextBtn);
+		}
+	}
+
+	/* update arrow buttons */	
+	function updateArrowButton()  {
+		if (! obj.circular) {
+			var prevBtn = swiperElem.getElementsByClassName('miniswiper-button-prev')[0],
+				nextBtn = swiperElem.getElementsByClassName('miniswiper-button-next')[0];
+
+			prevBtn.style.display = obj.activeIndex > 0 ? 'block' : 'none';
+			nextBtn.style.display = obj.activeIndex < obj.itemCount-1 ? 'block' : 'none';
+		}
+	}
 
 
 	/* autoplay */
@@ -744,12 +785,16 @@ function Miniswiper(elemId, params) {
 				if (idx == 0) {
 					if (obj.activeIndex == obj.itemCount-1) {
 						contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-						render(contentElem, -1*stepDistance+margin);
+						obj.direction == 'horizontal'
+							? render(contentElem, -1*stepDistance+margin)
+							: render(contentElem, 0, -1*stepDistance+margin);
 					}
 				} else if (idx == obj.itemCount-1) {
 					if (obj.activeIndex == 0) {						
 						contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-						render(contentElem, -(obj.itemCount+2)*stepDistance+margin);
+						obj.direction == 'horizontal'
+							? render(contentElem, -(obj.itemCount+2)*stepDistance+margin)
+							: render(contentElem, -(obj.itemCount+2)*stepDistance+margin);
 					}
 				}
 				currentStep = idx+2;
@@ -788,8 +833,27 @@ function Miniswiper(elemId, params) {
 		}
 
 		if (indicator) updateIndicator();
+		if (arrow) updateArrowButton();
 		if (obj.bindchange) obj.bindchange(obj.activeIndex);
 		if (autoplay) setPlay();
+	}
+
+
+	/* slide to previous slide show */
+	obj.slideToPrev = function() {		
+		if (obj.activeIndex > 0) 
+			obj.slideTo( obj.activeIndex-1 );
+		else if (obj.circular)
+			obj.slideTo( obj.itemCount-1 );
+	}
+
+
+	/* slide to next slide show */
+	obj.slideToNext = function() {
+		if (obj.activeIndex < obj.itemCount-1) 
+			obj.slideTo( obj.activeIndex+1 );
+		else if (obj.circular)
+			obj.slideTo( 0 );
 	}
 
 

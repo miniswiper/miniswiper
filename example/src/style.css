@@ -9,6 +9,7 @@ html, body {
 	margin: 0;
 	width: 100%;
 	height: 100%;
+	background: #faf9ff;
 }
 
 img {
@@ -97,4 +98,21 @@ code {
 	font-style: italic;
 	white-space: nowrap;
 	color: white;
+}
+
+
+/*--------------------------------------------------------------
+>>> Miniswiper indicator, button:
+--------------------------------------------------------------*/
+.miniswiper-container.vertical .miniswiper-indicator {
+	right: 20px;
+}
+.miniswiper-container.horizontal .miniswiper-indicator {
+	bottom: 20px;
+}
+.miniswiper-container .miniswiper-button-prev {
+	left: 20px;
+}
+.miniswiper-container .miniswiper-button-next {
+	right: 20px;
 }

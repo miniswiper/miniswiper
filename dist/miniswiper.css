@@ -58,17 +58,18 @@
   width: 12px;
   height: 12px;
 }
-.miniswiper-container .miniswiper-indicator .indicator-item.indicator-circle > svg > path:nth-child(2) {
+.miniswiper-container .miniswiper-indicator .indicator-item.indicator-circle > svg > path:last-child {
   stroke-dasharray: 282.783, 282.783;
   stroke-dashoffset: 282.783;
 }
-.miniswiper-container .miniswiper-indicator .indicator-item.indicator-circle.indicator-item-active > svg > path:nth-child(2) {
+.miniswiper-container .miniswiper-indicator .indicator-item.indicator-circle.indicator-item-active > svg > path:last-child {
   stroke-dashoffset: 0;
 }
 .miniswiper-container.horizontal .miniswiper-indicator {
   left: 0;
   bottom: 10px;
   width: 100%;
+  line-height: 0;
   text-align: center;
 }
 .miniswiper-container.horizontal .miniswiper-indicator .indicator-item {
@@ -79,7 +80,7 @@
   background: white;
 }
 .miniswiper-container.vertical .miniswiper-indicator {
-  right: 20px;
+  right: 10px;
   top: 50%;
   -webkit-transform: translate(0, -50%);
   -moz-transform: translate(0, -50%);
@@ -104,4 +105,38 @@
   left: 0;
   top: 0;
   opacity: 0;
+}
+.miniswiper-container .miniswiper-button-prev,
+.miniswiper-container .miniswiper-button-next {
+  position: absolute;
+  top: 50%;
+  margin-top: -13px;
+  width: 26px;
+  height: 36px;
+}
+.miniswiper-container .miniswiper-button-prev:before,
+.miniswiper-container .miniswiper-button-next:before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 16px;
+  height: 26px;
+  display: block;
+}
+.miniswiper-container .miniswiper-button-prev {
+  left: 5px;
+  right: auto;
+}
+.miniswiper-container .miniswiper-button-prev:before {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'%23fff'%2F%3E%3C%2Fsvg%3E");
+  background-size: 16px 26px;
+}
+.miniswiper-container .miniswiper-button-next {
+  right: 5px;
+  left: auto;
+}
+.miniswiper-container .miniswiper-button-next:before {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23fff'%2F%3E%3C%2Fsvg%3E");
+  background-size: 16px 26px;
 }
