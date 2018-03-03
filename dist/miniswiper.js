@@ -121,7 +121,13 @@ function Miniswiper(elemId, params) {
 		var img = new Image();
 			img.src = image.getAttribute('data-src'),
 			complete = function(){
-				image.src = img.src;
+				image.style.opacity = 0;
+				image.src = img.src;	
+				var a = 0, 
+					t = setInterval(function(){
+					image.style.opacity = ((a += 5)/100);
+					if (a == 100) clearInterval(t);
+				},25);
 				typeof callback==='function' && callback();
 			};
 
@@ -184,15 +190,16 @@ function Miniswiper(elemId, params) {
 
 		// set swiper width
 		if (!params || !params.width) 
-			width = swiperElem.offsetWidth;
-		else 
+			obj.width = width = swiperElem.offsetWidth;
+		else {
 			width = getPixel(params.width, document.body.clientWidth) || swiperElem.offsetWidth;
+			obj.width = width;
+		}
 		swiperElem.style.width = width+'px';
-		obj.width = width;
 
 		// initial sliders
 		for (var i = 0; i < sliders.length; i += 1) {	
-			sliders[i].style.width = width+'px';
+			sliders[i].style.width = width*maxScale+'px';
 			// vertical spacial effect
 			if (special && obj.direction == 'vertical') {
 				sliders[i].style.paddingLeft = ((1-maxScale)*width / 2)+'px';
@@ -291,7 +298,7 @@ function Miniswiper(elemId, params) {
 						sliders[i].style.width = stepDistance+'px';
 
 						if (height) {
-							sliders[i].style.height = height*maxScale+'px';
+							sliders[i].style.height = height+'px';
 							sliders[i].style.paddingTop = ((1-maxScale)*height / 2)+'px';
 							sliders[i].style.paddingBottom = ((1-maxScale)*height / 2)+'px';
 						}
