@@ -41,6 +41,12 @@ p {
 	color: #999;
 }
 
+ul {
+	color: #555;
+	font-size: 14px;
+	line-height: 150%;
+}
+
 a {
 	color: #96c9ee;
 }

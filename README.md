@@ -10,4 +10,4 @@ Code is under the [MIT License](https://github.com/miniswiper/miniswiper/blob/ma
 
 ## Example
 
-Please visit [Miniswiper Examples](https://miniswiper.github.io/miniswiper/example/index.html)
+Please visit the [Miniswiper Examples](https://miniswiper.github.io/miniswiper/example/index.html)
