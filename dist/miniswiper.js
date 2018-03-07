@@ -359,11 +359,11 @@ function Miniswiper(elemId, params) {
 
 	/* set slider style */
 	function setSliderStyle() {
-		var setScale = function(idx) {
-				if (obj.circular && obj.itemCount>1 && idx===2 || !obj.circular && idx===0)
-					render(sliders[idx],0,0,1);
+		var setScale = function(index) {
+				if (obj.circular && obj.itemCount>1 && index===2 || !obj.circular && index===0)
+					render(sliders[index],0,0,1);
 				else
-					render(sliders[idx],0,0,minScale/maxScale);
+					render(sliders[index],0,0,minScale/maxScale);
 			};
 
 		for (var i = 0; i < sliders.length; i += 1) {
@@ -504,7 +504,7 @@ function Miniswiper(elemId, params) {
 				if (nextScale > 1) nextScale = 1;
 				if (scale < min) scale = min;
 
-				if (stepInfo.nextStep && stepInfo.nextStep !== stepInfo.step) {
+				if (stepInfo.nextStep && stepInfo.nextStep !== currentStep) {
 					sliders[stepInfo.step].style[vendorPrefix+'Transition'] = 'transform 0ms';
 					render(sliders[stepInfo.step], 0, 0, scale);
 					if (stepInfo.nextStep > -1 && stepInfo.nextStep < sliders.length) {
@@ -745,20 +745,17 @@ function Miniswiper(elemId, params) {
 	/* autoplay */
 	function setPlay(){
 		timer[0] = setTimeout(function(){
-			var idx = obj.activeIndex < obj.itemCount-1 ?  obj.activeIndex+1 : 0;
-			obj.slideTo(idx);
+			var index = obj.activeIndex < obj.itemCount-1 ?  obj.activeIndex+1 : 0;
+			obj.slideTo(index);
 		}, interval);
 	}
 
 
 	/* slide to run slide show */
-	obj.slideTo = function(idx) {
+	obj.slideTo = function(index) {
 		obj.previousIndex = obj.activeIndex;
 		clearTimeout(timer[0]);
 		clearTimeout(timer[1]);
-
-		if (idx < 0) idx = (idx % obj.itemCount) + obj.itemCount;
-		if (idx > obj.itemCount-1) idx = idx % obj.itemCount;
 
 		// render the slide view
 		var fn = function(){
@@ -780,28 +777,27 @@ function Miniswiper(elemId, params) {
 		// slide show effect
 		if (obj.effect === 'slide') {	
 			if (! obj.circular) {	
-				obj.activeIndex = currentStep = idx;	
+				obj.activeIndex = currentStep = index;	
 				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
 				setStep(currentStep);
 			} else {
-				if (idx === 0 && obj.activeIndex === obj.itemCount-1
-					|| idx === obj.itemCount-1 && obj.activeIndex === 0
+				if (index === 0 && obj.activeIndex === obj.itemCount-1
+					|| index === obj.itemCount-1 && obj.activeIndex === 0
 				) {
 					contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-					var step = idx===0 ? -1 : obj.itemCount+2;
-					setStep(step);	
+					setStep(index===0 ? 1 : obj.itemCount+2);	
 				}
-				currentStep = idx+2;
+				currentStep = index+2;
 
 				timer[1] = setTimeout(fn,25);
 
-				obj.activeIndex = idx;
+				obj.activeIndex = index;
 			}
 
 		}
 		// fade effect
 		if (obj.effect === 'fade') {	
-			obj.activeIndex = currentStep = idx;
+			obj.activeIndex = currentStep = index;
 			sliders[obj.previousIndex].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
 			sliders[obj.previousIndex].style.opacity = 0;
 			sliders[obj.activeIndex].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
