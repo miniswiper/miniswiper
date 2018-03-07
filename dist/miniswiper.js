@@ -120,8 +120,7 @@ function Miniswiper(elemId, params) {
 
 	/* lazy load */
 	function lazyLoad(image, callback) {
-		var img = new Image();
-			img.src = image.getAttribute('data-src'),
+		var img = new Image(),
 			complete = function(){
 				image.style.opacity = 0;
 				image.src = img.src;	
@@ -132,6 +131,8 @@ function Miniswiper(elemId, params) {
 				},25);
 				typeof callback==='function' && callback();
 			};
+
+		img.src = image.getAttribute('data-src');
 
 		if (img.complte) complete();
 		img.onload = complete;
@@ -538,7 +539,7 @@ function Miniswiper(elemId, params) {
 				sliders[stepInfo.nextStep].style.opacity = opacity;
 			}
 		}
-	};
+	}
 
 	/* finish */
 	function finish(x, y) {
@@ -564,10 +565,7 @@ function Miniswiper(elemId, params) {
 			}
 
 			contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-
-			obj.direction === 'horizontal'
-				? render(contentElem, -currentStep*stepDistance+margin)
-				: render(contentElem, 0, -currentStep*stepDistance+margin);
+			setStep(currentStep);
 
 			// special				
 			if (special) {
@@ -599,7 +597,7 @@ function Miniswiper(elemId, params) {
 
 		currentX = null;
 		currentY = null;
-	};
+	}
 
 	/* get step information */
 	function getStepInfo(step, dist) {
@@ -627,6 +625,14 @@ function Miniswiper(elemId, params) {
 		}
 
 		return {step: step, dist: dist, nextStep: nextStep};
+	}
+
+	/* set step */
+	function setStep(step){	
+		if (obj.direction === 'horizontal')
+			render(contentElem, -step*stepDistance+margin)
+		else
+			render(contentElem, 0, -step*stepDistance+margin);
 	}
 
 
@@ -765,40 +771,28 @@ function Miniswiper(elemId, params) {
 			if (! obj.circular) {	
 				obj.activeIndex = currentStep = idx;	
 				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-				obj.direction === 'horizontal'
-					? render(contentElem, -currentStep*stepDistance+margin)
-					: render(contentElem, 0, -currentStep*stepDistance+margin);
+				setStep(currentStep);
 			} else {
-				if (idx === 0) {
-					if (obj.activeIndex === obj.itemCount-1) {
-						contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-						obj.direction === 'horizontal'
-							? render(contentElem, -1*stepDistance+margin)
-							: render(contentElem, 0, -1*stepDistance+margin);
-					}
-				} else if (idx === obj.itemCount-1) {
-					if (obj.activeIndex === 0) {						
-						contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-						obj.direction === 'horizontal'
-							? render(contentElem, -(obj.itemCount+2)*stepDistance+margin)
-							: render(contentElem, -(obj.itemCount+2)*stepDistance+margin);
-					}
+				if (idx === 0 && obj.activeIndex === obj.itemCount-1
+					|| idx === obj.itemCount-1 && obj.activeIndex === 0
+				) {
+					contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
+					var step = idx===0 ? -1 : obj.itemCount+2;
+					setStep(step);	
 				}
 				currentStep = idx+2;
 
 				timer[1] = setTimeout(function(){
 					contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-					obj.direction === 'horizontal'
-						? render(contentElem, -currentStep*stepDistance+margin)
-						: render(contentElem, 0, -currentStep*stepDistance+margin);
+					setStep(currentStep);
 					// special effect
 					if (special) {
 						for (var i = 0; i < sliders.length; i += 1) {
 							sliders[i].style[vendorPrefix+'Transition'] 
 							= 'transform '+duration+'ms';
-							if (i !== currentStep) {
+
+							if (i !== currentStep) 
 								render(sliders[i], 0, 0, minScale/maxScale);
-							}
 						}
 						sliders[currentStep].style[vendorPrefix+'Transition']
 						= 'transform '+duration+'ms';
