@@ -109,7 +109,7 @@ function Miniswiper(elemId, params) {
 				result = parseFloat(value);
 			else if (/^\d+(\.\d+)?px$/.test(value)) 
 				result = parseFloat(value.replace('px',''))
-			else if (/^\d+(\.\d+)?\%$/.test(value)) {
+			else if (/^\d+(\.\d+)?%$/.test(value)) {
 				var w = parseFloat(value.replace('%',''))/100;
 				result = w * reference;
 			} 
@@ -129,7 +129,7 @@ function Miniswiper(elemId, params) {
 					image.style.opacity = ((a += 5)/100);
 					if (a === 100) clearInterval(t);
 				},25);
-				typeof callback==='function' && callback();
+				if (typeof callback==='function') callback();
 			};
 
 		img.src = image.getAttribute('data-src');
@@ -324,10 +324,10 @@ function Miniswiper(elemId, params) {
 				addClass(swiperElem, 'special');
 				stepDistance = width * maxScale;
 
-				for (var i = 0; i < sliders.length; i += 1) {
+				for (var i = 0; i < sliders.length; i += 1) 
 					sliders[i].style.width = stepDistance+'px';
-					setSliderStyle();
-				}	
+
+				setSliderStyle();
 				margin = width*(1-maxScale)/2;
 			}
 
@@ -346,13 +346,8 @@ function Miniswiper(elemId, params) {
 				stepDistance = height * maxScale;					
 				margin = height*(1-maxScale)/2;
 
-				if (! special) {
-					for (var i = 0; i < sliders.length; i += 1)
-						sliders[i].style.height = height+'px';
-				} else {
-					addClass(swiperElem, 'special');
-					setSliderStyle();
-				}
+				if (special) addClass(swiperElem, 'special');
+				setSliderStyle();
 
 				if (obj.circular && obj.itemCount > 1) {							
 					render(contentElem, 0, -2*stepDistance+margin);	
@@ -371,21 +366,16 @@ function Miniswiper(elemId, params) {
 					render(sliders[idx],0,0,minScale/maxScale);
 			};
 
-		if (obj.direction === 'horizontal') {	
-			for (var i = 0; i < sliders.length; i += 1) {	
-				if (height) {
-					sliders[i].style.height = height+'px';
-					sliders[i].style.paddingTop = ((1-maxScale)*height / 2)+'px';
-					sliders[i].style.paddingBottom = ((1-maxScale)*height / 2)+'px';
-				}
-				setScale(i);
-			}
-		} else {
-			for (var i = 0; i < sliders.length; i += 1) {
+		for (var i = 0; i < sliders.length; i += 1) {
+			if (obj.direction !== 'horizontal') {
 				sliders[i].style.height = height*maxScale+'px';
-				setScale(i);
+			} else if (height) {
+				sliders[i].style.height = height+'px';
+				sliders[i].style.paddingTop = ((1-maxScale)*height / 2)+'px';
+				sliders[i].style.paddingBottom = ((1-maxScale)*height / 2)+'px';
 			}
-		}	
+			setScale(i);
+		}
 	}
 
 
@@ -518,7 +508,8 @@ function Miniswiper(elemId, params) {
 					sliders[stepInfo.step].style[vendorPrefix+'Transition'] = 'transform 0ms';
 					render(sliders[stepInfo.step], 0, 0, scale);
 					if (stepInfo.nextStep > -1 && stepInfo.nextStep < sliders.length) {
-						sliders[stepInfo.nextStep].style[vendorPrefix+'Transition'] = 'transform 0ms';
+						sliders[stepInfo.nextStep].style[vendorPrefix+'Transition'] 
+						= 'transform 0ms';
 						render(sliders[stepInfo.nextStep], 0, 0, nextScale);
 					}
 				}
@@ -766,6 +757,26 @@ function Miniswiper(elemId, params) {
 		clearTimeout(timer[0]);
 		clearTimeout(timer[1]);
 
+		if (idx < 0) idx = (idx % obj.itemCount) + obj.itemCount;
+		if (idx > obj.itemCount-1) idx = idx % obj.itemCount;
+
+		// render the slide view
+		var fn = function(){
+			contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
+			setStep(currentStep);
+			// special effect
+			if (special) {
+				for (var i = 0; i < sliders.length; i += 1) {
+					sliders[i].style[vendorPrefix+'Transition'] = 'transform '+duration+'ms';
+
+					if (i !== currentStep) 
+						render(sliders[i], 0, 0, minScale/maxScale);
+				}
+				sliders[currentStep].style[vendorPrefix+'Transition'] = 'transform '+duration+'ms';
+				render(sliders[currentStep], 0, 0, 1);
+			}
+		}
+
 		// slide show effect
 		if (obj.effect === 'slide') {	
 			if (! obj.circular) {	
@@ -782,23 +793,7 @@ function Miniswiper(elemId, params) {
 				}
 				currentStep = idx+2;
 
-				timer[1] = setTimeout(function(){
-					contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-					setStep(currentStep);
-					// special effect
-					if (special) {
-						for (var i = 0; i < sliders.length; i += 1) {
-							sliders[i].style[vendorPrefix+'Transition'] 
-							= 'transform '+duration+'ms';
-
-							if (i !== currentStep) 
-								render(sliders[i], 0, 0, minScale/maxScale);
-						}
-						sliders[currentStep].style[vendorPrefix+'Transition']
-						= 'transform '+duration+'ms';
-						render(sliders[currentStep], 0, 0, 1);
-					}
-				},25)
+				timer[1] = setTimeout(fn,25);
 
 				obj.activeIndex = idx;
 			}
