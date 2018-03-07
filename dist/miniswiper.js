@@ -394,7 +394,7 @@ function Miniswiper(elemId, params) {
 	/* listen mouse events */
 	function listenTouchEvents() {
 		// touch start
-		swiperElem.addEventListener('touchstart', function(e){
+		contentElem.addEventListener('touchstart', function(e){
 			clearTimeout(timer[0]);
 			clearTimeout(timer[1]);
 
@@ -407,12 +407,12 @@ function Miniswiper(elemId, params) {
 			currentY = e.touches[0].clientY;
 		});			
 		// touch move
-		swiperElem.addEventListener('touchmove', function(e){
+		contentElem.addEventListener('touchmove', function(e){
 			e.preventDefault();
 			move(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
 		});
 		// touch end
-		swiperElem.addEventListener('touchend', function(e){
+		contentElem.addEventListener('touchend', function(e){
 			finish(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
 		});
 	}
@@ -420,7 +420,7 @@ function Miniswiper(elemId, params) {
 	/* listen mouse events */
 	function listenMouseEvents() {
 		// mouse down 
-		swiperElem.onmousedown = function(e){
+		contentElem.onmousedown = function(e){
 			e.preventDefault();
 			e.stopPropagation();
 			clearTimeout(timer[0]);
@@ -542,11 +542,11 @@ function Miniswiper(elemId, params) {
 			stepInfo = getStepInfo(currentStep, obj.direction === 'horizontal' ? moveX : moveY);
 
 		currentStep = stepInfo.nextStep;
+		obj.previousIndex = obj.activeIndex;
 		obj.activeIndex = currentStep;
 
 		// slide show effect
 		if (obj.effect === 'slide') {
-			obj.previousIndex = obj.activeIndex;
 
 			if (obj.circular) 
 				obj.activeIndex = currentStep>1 ? currentStep-2 : obj.itemCount-1;
@@ -577,7 +577,6 @@ function Miniswiper(elemId, params) {
 				sliders[prevStep].style.opacity = 0;
 				sliders[currentStep].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
 				sliders[currentStep].style.opacity = 1;
-				obj.activeIndex = currentStep;
 			}
 		}
 
@@ -775,7 +774,7 @@ function Miniswiper(elemId, params) {
 		}
 
 		// slide show effect
-		if (obj.effect === 'slide') {	
+		if (obj.effect === 'slide') {
 			if (! obj.circular) {	
 				obj.activeIndex = currentStep = index;	
 				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
@@ -788,12 +787,10 @@ function Miniswiper(elemId, params) {
 					setStep(index===0 ? 1 : obj.itemCount+2);	
 				}
 				currentStep = index+2;
+				obj.activeIndex = index;
 
 				timer[1] = setTimeout(fn,25);
-
-				obj.activeIndex = index;
 			}
-
 		}
 		// fade effect
 		if (obj.effect === 'fade') {	
