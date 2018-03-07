@@ -128,7 +128,7 @@ function Miniswiper(elemId, params) {
 				var a = 0, 
 					t = setInterval(function(){
 					image.style.opacity = ((a += 5)/100);
-					if (a == 100) clearInterval(t);
+					if (a === 100) clearInterval(t);
 				},25);
 				typeof callback==='function' && callback();
 			};
@@ -155,7 +155,7 @@ function Miniswiper(elemId, params) {
 		setLayout();
 
 		// slide show effect
-		if (obj.effect == 'slide') {
+		if (obj.effect === 'slide') {
 			// circular
 			if (obj.circular && obj.itemCount > 1) {
 				contentElem.insertBefore(sliders[sliders.length-1].cloneNode(true), sliders[0]);
@@ -193,9 +193,9 @@ function Miniswiper(elemId, params) {
 
 	/* handle parameters */
 	function handleParams(params) {
-		if (params.direction && params.direction=='vertical')
+		if (params.direction && params.direction==='vertical')
 			obj.direction = 'vertical'
-		if (params.effect && params.effect=='fade')
+		if (params.effect && params.effect==='fade')
 			obj.effect = 'fade'
 		if (params.circular) 
 			obj.circular = params.circular;
@@ -244,7 +244,7 @@ function Miniswiper(elemId, params) {
 		for (var i = 0; i < sliders.length; i += 1) {	
 			sliders[i].style.width = width*maxScale+'px';
 			// vertical spacial effect
-			if (special && obj.direction == 'vertical') {
+			if (special && obj.direction === 'vertical') {
 				sliders[i].style.width = width+'px';
 				sliders[i].style.paddingLeft = ((1-maxScale)*width / 2)+'px';
 				sliders[i].style.paddingRight = ((1-maxScale)*width / 2)+'px';
@@ -267,46 +267,34 @@ function Miniswiper(elemId, params) {
 	function setHeight() {
 		var loadedImgs = 0,
 			imgs = sliders[0].getElementsByTagName('img'),
+
+			// callback
 			callback = function(){
 				loadedImgs += 1;
-				if (loadedImgs == imgs.length) {
+				if (loadedImgs === imgs.length) {
 					height = sliders[0].offsetHeight;
 
 					// special effect
 					if (special) {
 						height = height/maxScale;
-						for (var i = 0; i < sliders.length; i += 1) {
-							if (obj.direction == 'horizontal') {
-								sliders[i].style.height = height+'px';
-								sliders[i].style.paddingTop = (1-maxScale)*height/2+'px';
-								sliders[i].style.paddingBottom = (1-maxScale)*height/2+'px';
-							} else {
-								sliders[i].style.height = height*maxScale+'px';
-
-								if (obj.circular && obj.itemCount>1 && i==2 
-									|| !obj.circular && i==0)
-									render(sliders[i],0,0,1);
-								else
-									render(sliders[i],0,0,minScale/maxScale);
-							}
-						}
-						if (obj.direction == 'vertical') {
+						setSliderStyle();
+						if (obj.direction === 'vertical') {
 							margin = height*(1-maxScale)/2;
 							render(contentElem, 0, margin);
 						}
-						} 
-						// normal effect
-						else { 
+					} 
+					// normal effect
+					else { 
 						for (var i = 0; i < sliders.length; i += 1)
 							sliders[i].style.height = height+'px';
-						}
+					}
 					obj.height = height;
 					swiperElem.style.height = height+'px';
 				}
 
 				// if it's a circular model in the vertical direction, 
 				// initialize the content element
-				if (obj.effect=='slide' && obj.direction == 'vertical') {							
+				if (obj.effect==='slide' && obj.direction === 'vertical') {							
 					stepDistance = height*maxScale;
 					if (obj.circular && obj.itemCount > 1) {							
 						render(contentElem, 0, -2*stepDistance+margin);	
@@ -328,7 +316,7 @@ function Miniswiper(elemId, params) {
 	/* initialize slide view */
 	function initSlideView() {
 		// horizontal
-		if (obj.direction == 'horizontal') {
+		if (obj.direction === 'horizontal') {
 			stepDistance = width;
 
 			if (special) {
@@ -337,22 +325,12 @@ function Miniswiper(elemId, params) {
 
 				for (var i = 0; i < sliders.length; i += 1) {
 					sliders[i].style.width = stepDistance+'px';
-
-					if (height) {
-						sliders[i].style.height = height+'px';
-						sliders[i].style.paddingTop = ((1-maxScale)*height / 2)+'px';
-						sliders[i].style.paddingBottom = ((1-maxScale)*height / 2)+'px';
-					}
-
-					if (obj.circular && obj.itemCount>1 && i==2 || !obj.circular && i==0)
-						render(sliders[i],0,0,1);
-					else
-						render(sliders[i],0,0,minScale/maxScale);
+					setSliderStyle();
 				}	
 				margin = width*(1-maxScale)/2;
 			}
 
-			if (!obj.circular || obj.itemCount == 1) {
+			if (!obj.circular || obj.itemCount === 1) {
 				contentElem.style.width = (width*sliders.length+100)+'px';
 				render(contentElem, margin);
 			} else {
@@ -368,20 +346,11 @@ function Miniswiper(elemId, params) {
 				margin = height*(1-maxScale)/2;
 
 				if (! special) {
-					for (var i = 0; i < sliders.length; i += 1) {
+					for (var i = 0; i < sliders.length; i += 1)
 						sliders[i].style.height = height+'px';
-					}
 				} else {
 					addClass(swiperElem, 'special');
-
-					for (var i = 0; i < sliders.length; i += 1) {
-						sliders[i].style.height = height*maxScale+'px';
-
-						if (obj.circular && obj.itemCount>1 && i==2 || !obj.circular && i==0)
-							render(sliders[i],0,0,1);
-						else
-							render(sliders[i],0,0,minScale/maxScale);
-					}
+					setSliderStyle();
 				}
 
 				if (obj.circular && obj.itemCount > 1) {							
@@ -392,12 +361,36 @@ function Miniswiper(elemId, params) {
 		}
 	}
 
+	/* set slider style */
+	function setSliderStyle() {
+		var setScale = function(idx) {
+				if (obj.circular && obj.itemCount>1 && idx===2 || !obj.circular && idx===0)
+					render(sliders[idx],0,0,1);
+				else
+					render(sliders[idx],0,0,minScale/maxScale);
+			};
 
-	/* register events */
+		if (obj.direction === 'horizontal') {	
+			for (var i = 0; i < sliders.length; i += 1) {	
+				if (height) {
+					sliders[i].style.height = height+'px';
+					sliders[i].style.paddingTop = ((1-maxScale)*height / 2)+'px';
+					sliders[i].style.paddingBottom = ((1-maxScale)*height / 2)+'px';
+				}
+				setScale(i);
+			}
+		} else {
+			for (var i = 0; i < sliders.length; i += 1) {
+				sliders[i].style.height = height*maxScale+'px';
+				setScale(i);
+			}
+		}	
+	}
+
+
+	/* register events */	
+	var currentX, currentY;
 	function registerEvents() {
-		var currentX, 
-			currentY;
-
 		// if the device is a mobile device, listen for touch events.
 		if (/AppleWebKit.*Mobile.*/.test(navigator.userAgent))
 			listenTouchEvents();
@@ -407,192 +400,6 @@ function Miniswiper(elemId, params) {
 			listenMouseEvents();
 	}
 
-	/* move */
-	function move (x, y) {
-		var moveX = x - currentX,
-			moveY = y - currentY,
-			step = currentStep;
-
-		// slide show effect
-		if (obj.effect == 'slide') {
-			// horizontal
-			if (obj.direction == 'horizontal') {
-				if (obj.circular && obj.itemCount > 1) {
-					if (step === 1 && moveX > 0) step = obj.itemCount+1;
-					if (step === obj.itemCount && moveX < 0) step = 0;
-				}
-				if (! obj.circular 
-					&& (step == 0&& moveX > 0 || step == obj.itemCount-1 && moveX < 0)
-				) moveX *= 0.25;
-				render(contentElem, -step*stepDistance+moveX+margin);
-			}
-			// vertical
-			else {				
-				if (obj.circular && obj.itemCount > 1) {
-					if (step === 1 && moveY > 0) step = obj.itemCount+1;
-					if (step === obj.itemCount && moveY < 0) step = 0;
-				}
-				if (! obj.circular 
-					&& (step == 0&& moveY > 0 || step == obj.itemCount-1 && moveY < 0)
-				) moveY *= 0.25;
-				render(contentElem, 0, -step*stepDistance+moveY+margin);
-			}
-			// special
-			if (special) {
-				var max = 1, 
-					min = minScale/maxScale,
-					num = obj.direction == 'horizontal' 
-						? (max-min) / (width * maxScale)
-						: (max-min) / (height * maxScale),
-					nextScale = min + num * Math.abs(moveX),
-					scale = 1 - num * Math.abs(moveX),
-					nextStep;
-
-				if (obj.direction == 'horizontal')
-					nextStep = moveX < 0 ? step+1 : step-1;
-				else 
-					nextStep = moveY < 0 ? step+1 : step-1;
-
-				if (nextScale > 1) nextScale = 1;
-				if (scale < min) scale = min;
-
-				if (nextStep && nextStep != step) {
-					sliders[step].style[vendorPrefix+'Transition'] = 'transform 0ms';
-					render(sliders[step], 0, 0, scale);
-					if (nextStep > -1 && nextStep < sliders.length) {
-						sliders[nextStep].style[vendorPrefix+'Transition'] = 'transform 0ms';
-						render(sliders[nextStep], 0, 0, nextScale);
-					}
-				}
-			}
-		}
-		// fade effect
-		else if (obj.itemCount > 1) {
-			if (obj.direction == 'horizontal' && moveX < 0
-				|| obj.direction == 'vertical' && moveY < 0) 
-			{
-				if (step < obj.itemCount-1) step += 1;
-				else if (obj.circular) step = 0;
-			}
-			if (obj.direction == 'horizontal' && moveX > 0
-				|| obj.direction == 'vertical' && moveY > 0) 
-			{						
-				if (step > 0) step -= 1;
-				else if (obj.circular) step = obj.itemCount-1;
-			}
-
-			if (currentStep != step) {
-				var opacity = obj.direction == 'horizontal' 
-						? Math.abs(moveX)/width
-						: Math.abs(moveY)/height;
-				sliders[currentStep].style.opacity = 1 - opacity;
-				sliders[step].style.opacity = opacity;
-			}
-		}
-	};
-
-	/* finish */
-	function finish(x, y) {
-		if (!currentX || !currentY) return;
-
-		var moveX = x - currentX,
-			moveY = y - currentY;
-
-		// slide show effect
-		if (obj.effect == 'slide') {
-			// horizontal
-			if (obj.direction == 'horizontal') {	
-				obj.previousIndex = obj.activeIndex;
-
-				if (! obj.circular  || obj.itemCount == 1) {
-					if (moveX > 0 && currentStep > 0)
-						currentStep -= 1;					
-					if (moveX < 0 && currentStep < obj.itemCount-1)
-						currentStep += 1;
-
-					obj.activeIndex = currentStep;
-				} else {
-					var step = currentStep;
-					if (moveX > 0)
-						currentStep = step===1 ? obj.itemCount : step-1					
-					if (moveX < 0)
-						currentStep = step===obj.itemCount ? 1 : step+1					
-
-					obj.activeIndex = currentStep>1 ? currentStep-2 : obj.itemCount-1;
-				}
-				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-				render(contentElem, -currentStep*stepDistance+margin);
-			}
-			// vertical
-			else {								
-				obj.previousIndex = obj.activeIndex;
-
-				if (! obj.circular || obj.itemCount == 1) {
-					if (moveY > 0 && currentStep > 0)
-						currentStep -= 1;					
-					if (moveY < 0 && currentStep < obj.itemCount-1)
-						currentStep += 1;
-
-					obj.activeIndex = currentStep;
-				} else {		
-					var step = currentStep;
-					if (moveY > 0)
-						currentStep = step===1 ? obj.itemCount : step-1					
-					if (moveY < 0)
-						currentStep = step===obj.itemCount ? 1 : step+1					
-
-					obj.activeIndex = currentStep>1 ? currentStep-2 : obj.itemCount-1;
-				}
-				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-				render(contentElem, 0, -currentStep*stepDistance+margin);
-			}				
-			// special				
-			if (special) {
-				for (var i = 0; i < sliders.length; i += 1) {
-					if (i != currentStep) {
-						sliders[i].style[vendorPrefix+'Transition'] = 'transform '+duration+'ms';
-						render(sliders[i], 0, 0, minScale/maxScale);
-					}
-				}
-				sliders[currentStep].style[vendorPrefix+'Transition']='transform '+duration+'ms';
-				render(sliders[currentStep], 0, 0, 1);
-			}
-		}
-		// fade effect
-		else if (obj.itemCount > 1) {
-			var prevStep = currentStep;
-
-			if (obj.direction == 'horizontal' && moveX < 0
-				|| obj.direction == 'vertical' && moveY < 0) 
-			{
-				if (currentStep < obj.itemCount-1) currentStep += 1;
-				else if (obj.circular) currentStep = 0;
-			}
-			if (obj.direction == 'horizontal' && moveX > 0
-				|| obj.direction == 'vertical' && moveY > 0) 
-			{						
-				if (currentStep > 0) currentStep -= 1;
-				else if (obj.circular) currentStep = obj.itemCount-1;
-			}
-
-			if (currentStep != prevStep) {
-				sliders[prevStep].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-				sliders[prevStep].style.opacity = 0;
-				sliders[currentStep].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-				sliders[currentStep].style.opacity = 1;
-				obj.activeIndex = currentStep;
-			}
-		}
-
-		if (indicator) updateIndicator();
-		if (arrow) updateArrowButton();
-		if (obj.bindchange) obj.bindchange(obj.activeIndex);
-		if (autoplay) setPlay();
-
-		currentX = null;
-		currentY = null;
-	};
-
 	/* listen mouse events */
 	function listenTouchEvents() {
 		// touch start
@@ -600,7 +407,7 @@ function Miniswiper(elemId, params) {
 			clearTimeout(timer[0]);
 			clearTimeout(timer[1]);
 
-			if (obj.effect == 'slide')
+			if (obj.effect === 'slide')
 				contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
 			else
 				sliders[obj.activeIndex].style[vendorPrefix+'Transition'] = 'opacity 0ms';
@@ -628,7 +435,7 @@ function Miniswiper(elemId, params) {
 			clearTimeout(timer[0]);
 			clearTimeout(timer[1]);	
 
-			if (obj.effect == 'slide')
+			if (obj.effect === 'slide')
 				contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';				
 			else
 				sliders[obj.activeIndex].style[vendorPrefix+'Transition'] = 'opacity 0ms';
@@ -675,6 +482,153 @@ function Miniswiper(elemId, params) {
 		};		
 	}
 
+	/* move */
+	function move (x, y) {
+		var moveX = x - currentX,
+			moveY = y - currentY,
+			stepInfo;
+
+		// slide show effect
+		if (obj.effect === 'slide') {
+			// horizontal
+			if (obj.direction === 'horizontal') {
+				stepInfo = getStepInfo(currentStep, moveX);
+				render(contentElem, -stepInfo.step * stepDistance + stepInfo.dist + margin);
+			}
+			// vertical
+			else {								
+				stepInfo = getStepInfo(currentStep, moveY);
+				render(contentElem, 0, -stepInfo.step * stepDistance + stepInfo.dist + margin);
+			}
+			// special
+			if (special) {
+				var max = 1, 
+					min = minScale/maxScale,
+					num = obj.direction === 'horizontal' 
+						? (max-min) / (width * maxScale)
+						: (max-min) / (height * maxScale),
+					nextScale = min + num * Math.abs(moveX),
+					scale = 1 - num * Math.abs(moveX);
+
+				if (nextScale > 1) nextScale = 1;
+				if (scale < min) scale = min;
+
+				if (stepInfo.nextStep && stepInfo.nextStep !== stepInfo.step) {
+					sliders[stepInfo.step].style[vendorPrefix+'Transition'] = 'transform 0ms';
+					render(sliders[stepInfo.step], 0, 0, scale);
+					if (stepInfo.nextStep > -1 && stepInfo.nextStep < sliders.length) {
+						sliders[stepInfo.nextStep].style[vendorPrefix+'Transition'] = 'transform 0ms';
+						render(sliders[stepInfo.nextStep], 0, 0, nextScale);
+					}
+				}
+			}
+		}
+		// fade effect
+		else if (obj.itemCount > 1) {
+			if (obj.direction === 'horizontal' && moveX !== 0)
+				stepInfo = getStepInfo(currentStep, moveX);
+			if (obj.direction === 'vertical' && moveY !== 0)
+				stepInfo = getStepInfo(currentStep, moveY);
+
+			if (stepInfo && stepInfo.nextStep !== currentStep) {
+				var opacity = obj.direction === 'horizontal' 
+						? Math.abs(moveX)/width
+						: Math.abs(moveY)/height;
+				sliders[currentStep].style.opacity = 1 - opacity;
+				sliders[stepInfo.nextStep].style.opacity = opacity;
+			}
+		}
+	};
+
+	/* finish */
+	function finish(x, y) {
+		if (!currentX || !currentY) return;
+
+		var moveX = x - currentX,
+			moveY = y - currentY,
+			prevStep = currentStep,
+			stepInfo = getStepInfo(currentStep, obj.direction === 'horizontal' ? moveX : moveY);
+
+		currentStep = stepInfo.nextStep;
+		obj.activeIndex = currentStep;
+
+		// slide show effect
+		if (obj.effect === 'slide') {
+			obj.previousIndex = obj.activeIndex;
+
+			if (obj.circular) 
+				obj.activeIndex = currentStep>1 ? currentStep-2 : obj.itemCount-1;
+			else {
+				if (currentStep < 0) currentStep = 0;
+				if (currentStep > obj.itemCount-1) currentStep = obj.itemCount-1;
+			}
+
+			contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
+
+			obj.direction === 'horizontal'
+				? render(contentElem, -currentStep*stepDistance+margin)
+				: render(contentElem, 0, -currentStep*stepDistance+margin);
+
+			// special				
+			if (special) {
+				for (var i = 0; i < sliders.length; i += 1) {
+					if (i !== currentStep) {
+						sliders[i].style[vendorPrefix+'Transition'] = 'transform '+duration+'ms';
+						render(sliders[i], 0, 0, minScale/maxScale);
+					}
+				}
+				sliders[currentStep].style[vendorPrefix+'Transition']='transform '+duration+'ms';
+				render(sliders[currentStep], 0, 0, 1);
+			}
+		}
+		// fade effect
+		else if (obj.itemCount > 1) {
+			if (currentStep !== prevStep) {
+				sliders[prevStep].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
+				sliders[prevStep].style.opacity = 0;
+				sliders[currentStep].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
+				sliders[currentStep].style.opacity = 1;
+				obj.activeIndex = currentStep;
+			}
+		}
+
+		if (indicator) updateIndicator();
+		if (arrow) updateArrowButton();
+		if (obj.bindchange) obj.bindchange(obj.activeIndex);
+		if (autoplay) setPlay();
+
+		currentX = null;
+		currentY = null;
+	};
+
+	/* get step information */
+	function getStepInfo(step, dist) {
+		var nextStep;
+		// for slide view effect
+		if (obj.effect === 'slide') {
+			if (obj.circular && obj.itemCount > 1) {
+				if (step === 1 && dist > 0) step = obj.itemCount+1;
+				if (step === obj.itemCount && dist < 0) step = 0;
+			}
+			if (!obj.circular && (step === 0 && dist > 0 || step === obj.itemCount-1 && dist < 0)) {
+				dist *= 0.25;
+			}
+			nextStep = dist < 0 ? step+1 : step-1;
+		}
+		// for fade effect
+		else {
+			if (dist < 0) {
+				if (step < obj.itemCount-1) nextStep = step+1;
+				else if (obj.circular) nextStep = 0;
+			} else {
+				if (step > 0) nextStep = step-1;
+				else if (obj.circular) nextStep = obj.itemCount-1;
+			}		
+		}
+
+		return {step: step, dist: dist, nextStep: nextStep};
+	}
+
 
 	/* initialize indicator */
 	function initIndicator()  {
@@ -682,7 +636,7 @@ function Miniswiper(elemId, params) {
 		elem.className = 'miniswiper-indicator';
 
 		// dots
-		if (! autoplay || indicator != 'circle')
+		if (! autoplay || indicator !== 'circle')
 			createIndicatorDots(elem);
 		// circle
 		else 
@@ -695,13 +649,13 @@ function Miniswiper(elemId, params) {
 	function createIndicatorDots(wrap) {
 		for (var i = 0; i < obj.itemCount; i += 1) {
 			var dot = document.createElement('span');
-			dot.className = i!=0 
+			dot.className = i!==0 
 				? 'indicator-item indicator-dot' 
 				: 'indicator-item indicator-dot indicator-item-active';
 			dot.setAttribute('data-index', i);
 
 			wrap.appendChild(dot);
-			dot.addEventListener('click', function(e){
+			dot.addEventListener('click', function(){
 				obj.slideTo( parseInt(this.getAttribute('data-index')) );
 			});
 		}	
@@ -736,7 +690,7 @@ function Miniswiper(elemId, params) {
 				path2.style[vendorPrefix+'Transition'] = 'stroke-dashoffset '+interval+'ms';
 				addClass(circle, 'indicator-item-active');
 			}				
-			circle.addEventListener('click', function(e){
+			circle.addEventListener('click', function(){
 				obj.slideTo( parseInt(this.getAttribute('data-index')) );
 			});
 		}		
@@ -807,25 +761,25 @@ function Miniswiper(elemId, params) {
 		clearTimeout(timer[1]);
 
 		// slide show effect
-		if (obj.effect == 'slide') {	
+		if (obj.effect === 'slide') {	
 			if (! obj.circular) {	
 				obj.activeIndex = currentStep = idx;	
 				contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-				obj.direction == 'horizontal'
+				obj.direction === 'horizontal'
 					? render(contentElem, -currentStep*stepDistance+margin)
 					: render(contentElem, 0, -currentStep*stepDistance+margin);
 			} else {
-				if (idx == 0) {
-					if (obj.activeIndex == obj.itemCount-1) {
+				if (idx === 0) {
+					if (obj.activeIndex === obj.itemCount-1) {
 						contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-						obj.direction == 'horizontal'
+						obj.direction === 'horizontal'
 							? render(contentElem, -1*stepDistance+margin)
 							: render(contentElem, 0, -1*stepDistance+margin);
 					}
-				} else if (idx == obj.itemCount-1) {
-					if (obj.activeIndex == 0) {						
+				} else if (idx === obj.itemCount-1) {
+					if (obj.activeIndex === 0) {						
 						contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-						obj.direction == 'horizontal'
+						obj.direction === 'horizontal'
 							? render(contentElem, -(obj.itemCount+2)*stepDistance+margin)
 							: render(contentElem, -(obj.itemCount+2)*stepDistance+margin);
 					}
@@ -834,7 +788,7 @@ function Miniswiper(elemId, params) {
 
 				timer[1] = setTimeout(function(){
 					contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
-					obj.direction == 'horizontal'
+					obj.direction === 'horizontal'
 						? render(contentElem, -currentStep*stepDistance+margin)
 						: render(contentElem, 0, -currentStep*stepDistance+margin);
 					// special effect
@@ -842,7 +796,7 @@ function Miniswiper(elemId, params) {
 						for (var i = 0; i < sliders.length; i += 1) {
 							sliders[i].style[vendorPrefix+'Transition'] 
 							= 'transform '+duration+'ms';
-							if (i != currentStep) {
+							if (i !== currentStep) {
 								render(sliders[i], 0, 0, minScale/maxScale);
 							}
 						}
@@ -857,7 +811,7 @@ function Miniswiper(elemId, params) {
 
 		}
 		// fade effect
-		if (obj.effect == 'fade') {	
+		if (obj.effect === 'fade') {	
 			obj.activeIndex = currentStep = idx;
 			sliders[obj.previousIndex].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
 			sliders[obj.previousIndex].style.opacity = 0;
