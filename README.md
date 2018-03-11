@@ -25,6 +25,7 @@ Code is under the [MIT License](https://github.com/miniswiper/miniswiper/blob/ma
 |`special`|`null`, object|`null`|`Object`|
 |- `maxScale`|positive number(<= 1)|`1`|`Number`|
 |- `minScale`|positive number(<= special.maxScale)|`1`|`Number`|
+|- `minOpacity`|positive number(<= 1)|`1`|`Number`|
 |`bindchange`|`function(index){...}`|`null`|`Function`|
 
 
