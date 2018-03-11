@@ -22,6 +22,7 @@ function Miniswiper(elemId, params) {
 		special  = false,
 		minScale = 1,
 		maxScale = 1,
+		minOpacity = 1,
 		margin = 0;
 
 	// animation variables
@@ -80,6 +81,7 @@ function Miniswiper(elemId, params) {
 		}
 	}
 
+
 	/* add the class name to an element */
 	function addClass(elem, className) {
 		if (elem.classList)
@@ -97,6 +99,7 @@ function Miniswiper(elemId, params) {
 		else 
 			elem.setAttribute('class', elem.getAttribute('class').replace(className,'') );
 	}
+
 
 	/* get pixel */
 	function getPixel(value, reference) {
@@ -117,6 +120,7 @@ function Miniswiper(elemId, params) {
 
 		return result;
 	}
+
 
 	/* lazy load */
 	function lazyLoad(image, callback) {
@@ -218,13 +222,19 @@ function Miniswiper(elemId, params) {
 				autoplay = true;
 			}
 		}
-		if (params.special && params.special.maxScale && params.special.maxScale < 1) {
+		if (params.special && params.special.maxScale && params.special.maxScale < 1
+			 && params.special.maxScale > 0) 
+		{
 			special = true;
 			maxScale = params.special.maxScale;
 			minScale 
 				= params.special.minScale && params.special.minScale < params.special.maxScale
+					&&  params.special.maxScale > 0
 				? params.special.minScale
-				: maxScale;
+				: maxScale;			 
+			if (params.special.minOpacity && params.special.minOpacity < 1
+				&&  params.special.minOpacity > 0
+			) minOpacity = params.special.minOpacity;
 		}		
 	}
 
@@ -359,11 +369,14 @@ function Miniswiper(elemId, params) {
 
 	/* set slider style */
 	function setSliderStyle() {
-		var setScale = function(index) {
-				if (obj.circular && obj.itemCount>1 && index===2 || !obj.circular && index===0)
+		var setStyle = function(index) {
+				if (obj.circular && obj.itemCount>1 && index===2 || !obj.circular && index===0) {
 					render(sliders[index],0,0,1);
-				else
-					render(sliders[index],0,0,minScale/maxScale);
+					sliders[index].style.opacity = 1;
+				} else {
+					render(sliders[index],0,0,minScale/maxScale);					
+					sliders[index].style.opacity = minOpacity;
+				}
 			};
 
 		for (var i = 0; i < sliders.length; i += 1) {
@@ -374,7 +387,7 @@ function Miniswiper(elemId, params) {
 				sliders[i].style.paddingTop = ((1-maxScale)*height / 2)+'px';
 				sliders[i].style.paddingBottom = ((1-maxScale)*height / 2)+'px';
 			}
-			setScale(i);
+			setStyle(i);
 		}
 	}
 
@@ -490,28 +503,11 @@ function Miniswiper(elemId, params) {
 			else {								
 				stepInfo = getStepInfo(currentStep, moveY);
 				render(contentElem, 0, -stepInfo.step * stepDistance + stepInfo.dist + margin);
-			}
-			// special
+			}	
 			if (special) {
-				var max = 1, 
-					min = minScale/maxScale,
-					num = obj.direction === 'horizontal' 
-						? (max-min) / (width * maxScale)
-						: (max-min) / (height * maxScale),
-					nextScale = min + num * Math.abs(moveX),
-					scale = 1 - num * Math.abs(moveX);
-
-				if (nextScale > 1) nextScale = 1;
-				if (scale < min) scale = min;
-
 				if (stepInfo.nextStep && stepInfo.nextStep !== currentStep) {
-					sliders[stepInfo.step].style[vendorPrefix+'Transition'] = 'transform 0ms';
-					render(sliders[stepInfo.step], 0, 0, scale);
-					if (stepInfo.nextStep > -1 && stepInfo.nextStep < sliders.length) {
-						sliders[stepInfo.nextStep].style[vendorPrefix+'Transition'] 
-						= 'transform 0ms';
-						render(sliders[stepInfo.nextStep], 0, 0, nextScale);
-					}
+					var dist = obj.direction === 'horizontal' ? moveX : moveY;
+					setSlider(stepInfo.step, stepInfo.nextStep, dist);
 				}
 			}
 		}
@@ -547,14 +543,12 @@ function Miniswiper(elemId, params) {
 
 		// slide show effect
 		if (obj.effect === 'slide') {
-
 			if (obj.circular) 
 				obj.activeIndex = currentStep>1 ? currentStep-2 : obj.itemCount-1;
 			else {
 				if (currentStep < 0) currentStep = 0;
 				if (currentStep > obj.itemCount-1) currentStep = obj.itemCount-1;
 			}
-
 			contentElem.style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
 			setStep(currentStep);
 
@@ -562,20 +556,22 @@ function Miniswiper(elemId, params) {
 			if (special) {
 				for (var i = 0; i < sliders.length; i += 1) {
 					if (i !== currentStep) {
-						sliders[i].style[vendorPrefix+'Transition'] = 'transform '+duration+'ms';
+						sliders[i].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
 						render(sliders[i], 0, 0, minScale/maxScale);
+						sliders[i].style.opacity = minOpacity;
 					}
 				}
-				sliders[currentStep].style[vendorPrefix+'Transition']='transform '+duration+'ms';
+				sliders[currentStep].style[vendorPrefix+'Transition']='all '+duration+'ms';
 				render(sliders[currentStep], 0, 0, 1);
+				sliders[currentStep].style.opacity = 1;
 			}
 		}
 		// fade effect
 		else if (obj.itemCount > 1) {
 			if (currentStep !== prevStep) {
-				sliders[prevStep].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
+				sliders[prevStep].style[vendorPrefix+'Transition'] = 'opacity '+duration+'ms';
 				sliders[prevStep].style.opacity = 0;
-				sliders[currentStep].style[vendorPrefix+'Transition'] = 'all '+duration+'ms';
+				sliders[currentStep].style[vendorPrefix+'Transition'] = 'opacity '+duration+'ms';
 				sliders[currentStep].style.opacity = 1;
 			}
 		}
@@ -598,10 +594,12 @@ function Miniswiper(elemId, params) {
 				if (step === 1 && dist > 0) step = obj.itemCount+1;
 				if (step === obj.itemCount && dist < 0) step = 0;
 			}
-			if (!obj.circular && (step === 0 && dist > 0 || step === obj.itemCount-1 && dist < 0)) {
-				dist *= 0.25;
-			}
-			nextStep = dist < 0 ? step+1 : step-1;
+			if (!obj.circular && (step === 0 && dist > 0 || step === obj.itemCount-1 && dist < 0)
+				|| obj.itemCount === 1
+			) dist *= 0.25;
+
+			if (obj.itemCount === 1) nextStep = step = 0;
+			else nextStep = dist < 0 ? step+1 : step-1;
 		}
 		// for fade effect
 		else {
@@ -623,6 +621,37 @@ function Miniswiper(elemId, params) {
 			render(contentElem, -step*stepDistance+margin)
 		else
 			render(contentElem, 0, -step*stepDistance+margin);
+	}
+
+	/* set slider  */
+	function setSlider(step, nextStep, moveDist) {
+		var maxscale = maxopacity = 1,
+			minscale = minScale/maxScale,
+			minopacity = minOpacity,
+			maxDist = obj.direction === 'horizontal' ? width*maxScale : height*maxScale;
+
+		var num = (maxscale-minscale) / maxDist,
+			num1 = (maxopacity-minopacity) / maxDist;
+
+		nextScale = minscale + num * Math.abs(moveDist);
+		scale = 1 - num * Math.abs(moveDist);
+		nextOpacity = minopacity + num1 * Math.abs(moveDist); 
+		opacity = 1 - num1 * Math.abs(moveDist);
+
+		if (nextScale > 1) nextScale = 1;
+		if (scale < minscale) scale = minscale;
+
+		if (nextOpacity > 1) nextOpacity = 1;
+		if (opacity < minopacity) scale = minopacity;
+
+		sliders[step].style[vendorPrefix+'Transition'] = 'all 0ms';	
+		sliders[step].style.opacity = opacity;
+		render(sliders[step], 0, 0, scale);
+		if (nextStep > -1 && nextStep < sliders.length) {
+			sliders[nextStep].style[vendorPrefix+'Transition'] = 'all 0ms';
+			sliders[nextStep].style.opacity = nextOpacity;
+			render(sliders[nextStep], 0, 0, nextScale);
+		}
 	}
 
 
@@ -743,10 +772,12 @@ function Miniswiper(elemId, params) {
 
 	/* autoplay */
 	function setPlay(){
-		timer[0] = setTimeout(function(){
-			var index = obj.activeIndex < obj.itemCount-1 ?  obj.activeIndex+1 : 0;
-			obj.slideTo(index);
-		}, interval);
+		if (obj.itemCount > 1) {
+			timer[0] = setTimeout(function(){
+				var index = obj.activeIndex < obj.itemCount-1 ?  obj.activeIndex+1 : 0;
+				obj.slideTo(index);
+			}, interval);
+		}
 	}
 
 
@@ -765,11 +796,14 @@ function Miniswiper(elemId, params) {
 				for (var i = 0; i < sliders.length; i += 1) {
 					sliders[i].style[vendorPrefix+'Transition'] = 'transform '+duration+'ms';
 
-					if (i !== currentStep) 
+					if (i !== currentStep) {
 						render(sliders[i], 0, 0, minScale/maxScale);
+						sliders[i].style.opacity = minOpacity;
+					}
 				}
 				sliders[currentStep].style[vendorPrefix+'Transition'] = 'transform '+duration+'ms';
 				render(sliders[currentStep], 0, 0, 1);
+				sliders[currentStep].style.opacity = 1;
 			}
 		}
 
@@ -781,7 +815,7 @@ function Miniswiper(elemId, params) {
 				setStep(currentStep);
 			} else {
 				if (index === 0 && obj.activeIndex === obj.itemCount-1
-					|| index === obj.itemCount-1 && obj.activeIndex === 0
+					|| index === obj.itemCount-1 && obj.activeIndex === 0 && obj.itemCount > 2
 				) {
 					contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
 					setStep(index===0 ? 1 : obj.itemCount+2);	
