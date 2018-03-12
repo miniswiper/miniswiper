@@ -79,6 +79,11 @@ code {
 	color: #ccc;
 }
 
+.footer p a {
+	text-decoration: none;	
+	color: #ccc;
+}
+
 .item {
 	position: relative;
 	display: block;
