@@ -138,7 +138,7 @@ function Miniswiper(elemId, params) {
 
 		img.src = image.getAttribute('data-src');
 
-		if (img.complte) complete();
+		if (img.complete) complete();
 		img.onload = complete;
 	}
 
@@ -408,16 +408,7 @@ function Miniswiper(elemId, params) {
 	function listenTouchEvents() {
 		// touch start
 		contentElem.addEventListener('touchstart', function(e){
-			clearTimeout(timer[0]);
-			clearTimeout(timer[1]);
-
-			if (obj.effect === 'slide')
-				contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
-			else
-				sliders[obj.activeIndex].style[vendorPrefix+'Transition'] = 'opacity 0ms';
-
-			currentX = e.touches[0].clientX;
-			currentY = e.touches[0].clientY;
+			start(e.touches[0].clientX, e.touches[0].clientY);
 		});			
 		// touch move
 		contentElem.addEventListener('touchmove', function(e){
@@ -436,16 +427,8 @@ function Miniswiper(elemId, params) {
 		contentElem.onmousedown = function(e){
 			e.preventDefault();
 			e.stopPropagation();
-			clearTimeout(timer[0]);
-			clearTimeout(timer[1]);	
 
-			if (obj.effect === 'slide')
-				contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';				
-			else
-				sliders[obj.activeIndex].style[vendorPrefix+'Transition'] = 'opacity 0ms';
-
-			currentX = e.clientX;
-			currentY = e.clientY;
+			start(e.clientX, e.clientY);
 
 			// handle
 			var handle = function(e) {
@@ -484,6 +467,28 @@ function Miniswiper(elemId, params) {
 					document.removeEventListener('mousedown', handle, false);
 			};
 		};		
+	}
+
+	/* start */
+	function start(x, y) {	
+		clearTimeout(timer[0]);
+		clearTimeout(timer[1]);	
+
+		if (obj.effect === 'slide')
+			contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
+		else 
+			sliders[obj.activeIndex].style[vendorPrefix+'Transition'] = 'opacity 0ms';
+
+		if (currentStep > obj.itemCount)
+			currentStep %= obj.itemCount;
+
+		if (special) {	
+			render(sliders[currentStep], 0, 0, 1);
+			sliders[currentStep].style.opacity = 1;
+		}
+
+		currentX = x;
+		currentY = y;
 	}
 
 	/* move */
@@ -561,6 +566,7 @@ function Miniswiper(elemId, params) {
 						sliders[i].style.opacity = minOpacity;
 					}
 				}
+
 				sliders[currentStep].style[vendorPrefix+'Transition']='all '+duration+'ms';
 				render(sliders[currentStep], 0, 0, 1);
 				sliders[currentStep].style.opacity = 1;
@@ -820,6 +826,7 @@ function Miniswiper(elemId, params) {
 					contentElem.style[vendorPrefix+'Transition'] = 'all 0ms';
 					setStep(index===0 ? 1 : obj.itemCount+2);	
 				}
+
 				currentStep = index+2;
 				obj.activeIndex = index;
 
